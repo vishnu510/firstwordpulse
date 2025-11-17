@@ -31,6 +31,54 @@
   const forgotLink=document.getElementById('forgotLink');
   const revealIdBtn=document.getElementById('revealIdBtn');
 
+  // Forgot password: show recovery view
+  if(forgotLink){
+    forgotLink.addEventListener('click',e=>{
+      e.preventDefault();
+      if(loginView) loginView.hidden=true;
+      if(recoveryView) recoveryView.hidden=false;
+    });
+  }
+
+  // Reveal admin ID using recovery code
+  if(revealIdBtn){
+    revealIdBtn.addEventListener('click',()=>{
+      const code=document.getElementById('recoveryCode')?.value?.trim()||'';
+      const a=load(STORAGE.auth,null);
+      if(!a){alert('No admin configured.');return;}
+      if(!code){alert('Enter your recovery code');return;}
+      if(code===a.recovery){ alert('Your Admin ID: '+a.user); }
+      else{ alert('Invalid recovery code'); }
+    });
+  }
+
+  // Recovery form: reset credentials
+  const recoveryForm=document.getElementById('recoveryForm');
+  if(recoveryForm){
+    recoveryForm.addEventListener('submit',async e=>{
+      e.preventDefault();
+      const code=document.getElementById('recoveryCode')?.value?.trim()||'';
+      const newUser=document.getElementById('newUser')?.value?.trim()||'';
+      const p1=document.getElementById('newPass')?.value||'';
+      const p2=document.getElementById('newPass2')?.value||'';
+      const a=load(STORAGE.auth,null);
+      if(!a){alert('No admin configured.');return;}
+      if(!code){alert('Enter your recovery code');return;}
+      if(code!==a.recovery){alert('Invalid recovery code');return;}
+      if(!newUser||!p1||!p2){alert('Fill all fields');return;}
+      if(p1!==p2){alert('Passwords do not match');return;}
+      if(p1.length<8){alert('Password must be at least 8 characters');return;}
+      const salt=randHex(16);
+      const hash=await sha256(newUser+':'+p1+':'+salt);
+      save(STORAGE.auth,{user:newUser,salt,hash,recovery:a.recovery});
+      localStorage.removeItem(STORAGE.session);
+      alert('Credentials reset. Please login with your new Admin ID and password.');
+      if(recoveryView) recoveryView.hidden=true;
+      await showState();
+    });
+  }
+
+
   // First-run: show setup if no auth
   const auth=load(STORAGE.auth,null);
   const session=load(STORAGE.session,null);
@@ -58,6 +106,8 @@
     const recovery=(document.getElementById('setupRecovery')?.value||'').trim();
     if(!user||!p1||!p2||!recovery){alert('Fill all fields');return;}
     if(p1!==p2){alert('Passwords do not match');return;}
+    if(p1.length<8){alert('Password must be at least 8 characters');return;}
+    if(recovery.length<6){alert('Recovery code must be at least 6 characters');return;}
     const salt=randHex(16);
     const hash=await sha256(user+':'+p1+':'+salt);
     save(STORAGE.auth,{user,salt,hash,recovery});
@@ -359,3 +409,5 @@ navLinks.forEach(link => {
     if (tab === 'settings') loadSettingsTab();
   });
 });
+// Add a helper to mask recovery code when displaying
+function maskRecovery(code){ if(!code) return ''; return code.length<=4 ? '*'.repeat(code.length) : code.slice(0,2)+'*'.repeat(Math.max(0,code.length-4))+code.slice(-2); }
