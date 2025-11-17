@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="28" viewBox="0 0 120 28" role="img" aria-label="WordPulse" preserveAspectRatio="xMinYMid meet">
+  <title>WordPulse</title>
+  <g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Pulse mark -->
+    <path d="M2 14 L7 14 L10 8 L13 20 L16 10 L19 14 L22 14" stroke-width="2"/>
+  </g>
+  <!-- Wordmark -->
+  <text x="28" y="18" font-size="14" font-weight="700" fill="#ffffff"
+        font-family="Inter, Segoe UI, Roboto, Helvetica Neue, Arial, system-ui, -apple-system, sans-serif"
+        letter-spacing="0.2">
+    WordPulse
+  </text>
+</svg>

@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Saffron Admin</title>
+  <meta name="theme-color" content="#FF9933">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    /* Minimal admin shell overrides to complement styles.css */
+    .admin-app { display: none; grid-template-columns: 240px 1fr; min-height: 100vh; }
+    .admin-topbar { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--color-gray-300); }
+    .admin-sidebar { border-right: 1px solid var(--color-gray-300); padding: 16px; }
+    .admin-content { padding: 16px; }
+    .admin-nav a { display:block; padding:8px 10px; border-radius:8px; margin-bottom:6px; }
+    .admin-nav a.active { background: var(--color-gray-100); }
+    .admin-card { background: var(--color-gray-100); border:1px solid var(--color-gray-300); border-radius:12px; padding:16px; margin-bottom:16px; }
+    .admin-table { width: 100%; border-collapse: collapse; }
+    .admin-table th, .admin-table td { border-bottom: 1px solid var(--color-gray-300); padding: 8px; text-align: left; }
+    .admin-auth { max-width: 420px; margin: 10vh auto 0; padding: 20px; border:1px solid var(--color-gray-300); border-radius: 12px; background: var(--color-gray-100); }
+    .admin-auth h1 { margin-top: 0; }
+    .actions { margin-top: 12px; }
+  </style>
+</head>
+<body>
+  <!-- Setup (first run) -->
+  <section id="setupView" class="admin-auth" hidden>
+    <h1 class="headline">Admin Setup</h1>
+    <p>Create your admin credentials to secure access.</p>
+    <form id="setupForm" class="contact-form">
+      <div class="field">
+        <label for="setupUser">Admin ID</label>
+        <input id="setupUser" type="text" required>
+      </div>
+      <div class="field">
+        <label for="setupPass">Password</label>
+        <input id="setupPass" type="password" required>
+      </div>
+      <div class="field">
+        <label for="setupPass2">Confirm Password</label>
+        <input id="setupPass2" type="password" required>
+      </div>
+      <div class="field">
+        <label for="setupRecovery">Recovery code (keep this safe)</label>
+        <input id="setupRecovery" type="text" required>
+      </div>
+      <div class="actions">
+        <button class="cta" type="submit">Save Credentials</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Login -->
+  <section id="loginView" class="admin-auth" hidden>
+    <h1 class="headline">Admin Login</h1>
+    <form id="loginForm" class="contact-form" autocomplete="off">
+      <div class="field">
+        <label for="loginUser">Admin ID</label>
+        <input id="loginUser" type="text" required>
+      </div>
+      <div class="field">
+        <label for="loginPass">Password</label>
+        <input id="loginPass" type="password" required>
+      </div>
+      <div class="actions">
+        <button class="cta" type="submit">Login</button>
+        <button type="button" id="forgotLink" class="icon-btn" style="margin-left:8px;">Forgot ID or password?</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Admin Dashboard Shell -->
+  <div id="adminApp" class="admin-app">
+    <aside class="admin-sidebar">
+      <div class="admin-nav">
+        <a href="#write" data-tab="write" class="active">Write</a>
+        <a href="#posts" data-tab="posts">Posts</a>
+        <a href="#categories" data-tab="categories">Categories</a>
+        <a href="#settings" data-tab="settings">Settings</a>
+      </div>
+      <div style="margin-top:16px"><a class="cta" href="index.html">View Site</a></div>
+    </aside>
+    <div>
+      <header class="admin-topbar">
+        <strong>Saffron Admin</strong>
+        <button class="icon-btn" id="logoutBtn">Logout</button>
+      </header>
+      <main class="admin-content">
+        <!-- Write -->
+        <section id="tab-write" class="admin-card">
+          <h2>Write a Blog</h2>
+          <form id="postForm" class="contact-form">
+            <div class="field"><label for="postTitle">Title</label><input id="postTitle" type="text" required></div>
+            <div class="field"><label for="postExcerpt">Excerpt</label><input id="postExcerpt" type="text" required></div>
+            <div class="field"><label for="postAuthor">Author</label><input id="postAuthor" type="text" required></div>
+            <div class="field"><label for="postTime">Read time (e.g., 7 min)</label><input id="postTime" type="text" required></div>
+            <div class="field"><label for="postImageFile">Cover image</label><input id="postImageFile" type="file" accept="image/*"></div>
+            <div class="field"><label for="postCategory">Category</label><select id="postCategory"></select></div>
+            <div class="editor-toolbar">
+              <button type="button" data-cmd="bold" class="icon-btn">B</button>
+              <button type="button" data-cmd="italic" class="icon-btn"><i>I</i></button>
+              <button type="button" data-cmd="insertUnorderedList" class="icon-btn">• List</button>
+              <button type="button" data-cmd="createLink" class="icon-btn">Link</button>
+            </div>
+            <div id="postContent" class="editor-area" contenteditable="true" aria-label="Post content"></div>
+            <div class="actions"><button class="cta" type="submit">Publish</button></div>
+          </form>
+        </section>
+        <!-- Posts -->
+        <section id="tab-posts" class="admin-card" hidden>
+          <h2>All Posts</h2>
+          <table class="admin-table" id="postsTable">
+            <thead><tr><th>Title</th><th>Category</th><th>Author</th><th>Read</th><th>Actions</th></tr></thead>
+            <tbody>
+              <!-- rows populated by JS; each row gets actions: Edit / Open / Delete -->
+            </tbody>
+          </table>
+        </section>
+        <!-- Categories -->
+        <section id="tab-categories" class="admin-card" hidden>
+          <h2>Categories</h2>
+          <ul id="catsList"></ul>
+          <div class="field">
+            <input id="newCatInput" type="text" placeholder="New category name">
+            <button class="cta" id="addCatBtn" type="button">Add Category</button>
+          </div>
+        </section>
+        <!-- Settings -->
+        <section id="tab-settings" class="admin-card" hidden>
+          <h2>Homepage Hero</h2>
+          <form id="homeSettingsForm" class="contact-form">
+            <h3 style="margin:8px 0">Hero Content</h3>
+            <div class="field"><label for="homeHeroTitle">Heading</label><input id="homeHeroTitle" type="text" placeholder="Enter homepage hero title"></div>
+            <div class="field"><label for="homeHeroSub">Subheading</label><input id="homeHeroSub" type="text" placeholder="Short subheading/excerpt"></div>
+            <div class="field inline">
+              <div style="flex:1"><label for="homeHeroAuthor">Author</label><input id="homeHeroAuthor" type="text" placeholder="e.g., Alex Lee"></div>
+              <div style="flex:1"><label for="homeHeroRead">Read time</label><input id="homeHeroRead" type="text" placeholder="e.g., 7 min"></div>
+            </div>
+            <div class="field inline">
+              <div style="flex:1"><label for="homeHeroCtaLabel">CTA label</label><input id="homeHeroCtaLabel" type="text" placeholder="e.g., Read Full Article"></div>
+              <div style="flex:1"><label for="homeHeroLinkPost">Link to post</label><select id="homeHeroLinkPost"></select></div>
+            </div>
+
+            <h3 style="margin:16px 0 8px">Hero Image</h3>
+            <div class="field"><label for="homeHeroImageFile">Upload image</label><input id="homeHeroImageFile" type="file" accept="image/*"></div>
+            <div class="field"><img id="homeHeroPreview" alt="Current hero preview" style="max-width:260px;border-radius:12px;border:1px solid var(--color-gray-300)" hidden></div>
+            <div class="actions"><button class="cta" type="submit">Save</button></div>
+          </form>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <section id="recoveryView" class="admin-auth" hidden>
+    <h1 class="headline">Recover Access</h1>
+    <form id="recoveryForm" class="contact-form" autocomplete="off">
+      <div class="field"><label for="recoveryCode">Recovery code</label><input id="recoveryCode" type="text" required></div>
+      <div class="actions">
+        <button type="button" class="icon-btn" id="revealIdBtn">Reveal Admin ID</button>
+      </div>
+      <hr style="margin:12px 0;border:none;border-top:1px solid var(--color-gray-300)">
+      <p>Reset your ID and password</p>
+      <div class="field"><label for="newUser">New Admin ID</label><input id="newUser" type="text" required></div>
+      <div class="field"><label for="newPass">New Password</label><input id="newPass" type="password" required></div>
+      <div class="field"><label for="newPass2">Confirm New Password</label><input id="newPass2" type="password" required></div>
+      <div class="actions"><button class="cta" type="submit">Reset Credentials</button></div>
+    </form>
+  </section>
+
+  <script src="assets/js/admin.js"></script>
+</body>
+</html>

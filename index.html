@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Saffron Blog</title>
+  <meta name="description" content="Modern, mobile-first blog focusing on readable long-form content and newsletter signups.">
+  <meta name="theme-color" content="#FF9933">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <!-- Sticky Header / Navigation -->
+  <header class="site-header" id="top">
+    <a class="logo" href="#home" aria-label="Go home">
+      <img src="assets/svg/logo.svg" alt="Saffron Blog logo" width="120" height="28">
+    </a>
+    <nav class="primary-nav" aria-label="Primary Navigation">
+      <div class="nav-group">
+        <button class="dropdown" id="categoryDropdown" aria-haspopup="listbox" aria-expanded="false">Categories</button>
+        <ul class="dropdown-menu" id="categoryMenu" role="listbox" aria-label="All categories">
+          <!-- Populated by JS -->
+        </ul>
+      </div>
+      <button class="icon-btn" id="searchBtn" aria-label="Search">
+        <img src="assets/svg/search.svg" alt="Search" width="22" height="22">
+      </button>
+      <button class="cta" id="newsletterCTA">Subscribe</button>
+      <a class="icon-btn" href="admin.html" aria-label="Admin">Admin</a>
+      <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode">
+        <img src="assets/svg/moon.svg" alt="Dark mode" width="22" height="22">
+      </button>
+    </nav>
+  </header>
+
+  <!-- Search bar hidden by default -->
+  <section class="searchbar" id="searchBar" hidden>
+    <input type="search" id="searchInput" placeholder="Search articles" aria-label="Search articles">
+  </section>
+
+  <!-- Home -->
+  <main id="home" class="page active">
+    <section class="hero">
+      <article class="post-card featured">
+        <img loading="lazy" src="assets/svg/sample-cover-1.svg" alt="Featured post cover">
+        <div class="content">
+          <span class="pill">Design</span>
+          <h1 class="headline"><a href="#post" data-id="p1">The art of generous whitespace</a></h1>
+          <p class="excerpt">Whitespace guides focus, improves comprehension, and makes long-form content delightful. Here’s how to use it.</p>
+          <p class="meta">By Alex Lee • 7 min read</p>
+          <div class="card-actions">
+            <a class="cta" href="#post" data-id="p1">Read Full Blog</a>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="latest">
+      <h2 class="section-title">Latest posts</h2>
+      <div class="grid" id="latestGrid">
+        <!-- Cards injected by JS -->
+      </div>
+    </section>
+
+    <section class="contact-cta">
+      <div class="contact-card">
+        <h3>Have a question?</h3>
+        <p>We’d love to hear from you. Reach out and we’ll reply within 24 hours.</p>
+        <a class="cta" href="#contact">Contact us</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- About -->
+  <main id="about" class="page">
+    <article class="article single">
+      <h1 class="headline">About Saffron Blog</h1>
+      <p>We publish thoughtful essays on design, development, product, and culture. Our goal is simple: readable, fast, and accessible content—no fluff, just craft.</p>
+      <p>We prioritize typography and layout so your reading experience feels calm. Subscribe to our newsletter for monthly highlights.</p>
+      <div class="author-box">
+        <img src="assets/svg/author.svg" alt="Author avatar" width="56" height="56">
+        <div>
+          <strong>Editorial Team</strong>
+          <p>Writers, editors, and engineers behind the scenes.</p>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <!-- Contact -->
+  <main id="contact" class="page">
+    <section class="contact">
+      <h1 class="headline">Contact</h1>
+      <form class="contact-form" aria-label="Contact form">
+        <div class="field">
+          <label for="name">Name</label>
+          <input id="name" name="name" type="text" required>
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" required>
+        </div>
+        <div class="field">
+          <label for="topic">Topic</label>
+          <select id="topic" name="topic">
+            <option>General</option>
+            <option>Partnerships</option>
+            <option>Press</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="5" required></textarea>
+        </div>
+        <div class="actions">
+          <button type="submit" class="cta">Send message</button>
+        </div>
+      </form>
+      <div class="map">
+        <iframe title="Map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d24176.626!2d-73.985!3d40.758!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2z!5e0!3m2!1sen!2sus!4v000" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </section>
+  </main>
+
+  <!-- Blog listing -->
+  <main id="blog" class="page">
+    <section class="listing">
+      <h1 class="headline">Blog</h1>
+      <div class="filters">
+        <input type="search" id="listSearch" placeholder="Search posts" aria-label="Search posts">
+        <select id="listCategory" aria-label="Filter by category"></select>
+      </div>
+      <div class="grid" id="listGrid"></div>
+    </section>
+  </main>
+
+  <!-- Blog Detail (dynamic) -->
+  <main id="post" class="page">
+    <article class="article single">
+      <header class="article-header">
+        <span class="pill" id="postPill">Development</span>
+        <h1 class="headline" id="postTitle">Performance-first: building fast, readable blogs</h1>
+        <p class="meta" id="postMeta">By Jamie Cruz • Updated Oct 2025 • 9 min read</p>
+      </header>
+      <img class="hero-img" loading="lazy" id="postHeroImg" src="assets/svg/sample-cover-2.svg" alt="Article cover">
+      <div class="social-share" aria-label="Share this article">
+        <button class="icon-btn"><img src="assets/svg/share.svg" alt="Share"></button>
+      </div>
+      <div class="content" id="postContent">
+        <p>Speed and readability are inseparable. A fast site gets out of the reader’s way; a readable site guides their attention. Start with a single column around 700px, generous line-height, and a calm color palette.</p>
+        <h2>Typography</h2>
+        <p>Use a serif for headlines and a humanist sans for body. Keep contrast high (WCAG AA+), and avoid tiny font sizes on mobile.</p>
+        <h2>Layout</h2>
+        <p>Limit line length, increase spacing between sections, and let images breathe. Sticky headers help navigation without stealing focus.</p>
+        <h2>Performance</h2>
+        <ul>
+          <li>Lazy-load images and embed SVGs where possible.</li>
+          <li>Preload critical fonts and keep CSS lean.</li>
+          <li>Ship metadata and semantic HTML for SEO.</li>
+        </ul>
+      </div>
+      <footer class="author-box">
+        <img src="assets/svg/author.svg" alt="Author avatar" width="56" height="56">
+        <div>
+          <strong id="postAuthorName">Jamie Cruz</strong>
+          <!-- Removed author bio line as requested -->
+        </div>
+      </footer>
+    </article>
+    <aside class="sticky-sidebar" aria-label="Read this also">
+      <h3>Read this also</h3>
+      <ul id="sidebarList"></ul>
+    </aside>
+  </main>
+
+  <!-- Newsletter Modal -->
+  <div class="modal" id="newsletterModal" hidden role="dialog" aria-modal="true" aria-labelledby="nlTitle">
+    <div class="modal-content">
+      <h3 id="nlTitle">Join our newsletter</h3>
+      <p>One email each month. No spam, unsubscribe anytime.</p>
+      <form class="nl-form">
+        <label for="nlEmail" class="visually-hidden">Email</label>
+        <input id="nlEmail" type="email" placeholder="you@example.com" required>
+        <button class="cta" type="submit">Subscribe</button>
+      </form>
+      <button class="icon-btn close" id="nlClose" aria-label="Close">×</button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <nav aria-label="Footer">
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+      <a href="#blog">Blog</a>
+      <a href="#styleguide">Style guide</a>
+      <a href="#components">Components</a>
+    </nav>
+    <p>© 2025 Saffron Blog</p>
+  </footer>
+
+  <!-- Style Guide & Components (as sections) -->
+  <main id="styleguide" class="page">
+    <section>
+      <h1 class="headline">Style Guide</h1>
+      <p>Tokens: colors, typography scale, spacing scale, breakpoints. Saffron (#FF9933) for primary CTAs and category pills. Red (#E53935) is reserved for alerts only.</p>
+      <div class="tokens">
+        <div class="swatch saffron">Saffron #FF9933</div>
+        <div class="swatch black">Black #000000</div>
+        <div class="swatch white">White #FFFFFF</div>
+        <div class="swatch red">Red #E53935</div>
+      </div>
+      <h2>Typography</h2>
+      <p class="typo-sans">Inter — body text</p>
+      <p class="typo-serif">Merriweather — headings</p>
+    </section>
+  </main>
+
+  <main id="components" class="page">
+    <section>
+      <h1 class="headline">Component Library</h1>
+      <div class="grid demo">
+        <article class="post-card">
+          <img loading="lazy" src="assets/svg/sample-cover-1.svg" alt="Cover">
+          <div class="content">
+            <span class="pill">Product</span>
+            <h3 class="headline">Post card title</h3>
+            <p class="excerpt">Short teaser for the article goes here.</p>
+            <p class="meta">By Editor • 5 min read</p>
+            <div class="card-actions">
+              <a class="cta" href="#post" data-id="p1">Read Full Blog</a>
+            </div>
+          </div>
+        </article>
+        <div class="author-box">
+          <img src="assets/svg/author.svg" alt="Author avatar" width="56" height="56">
+          <div>
+            <strong>Author Name</strong>
+            <p>Short bio text and role</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Admin Dashboard -->
+  <main id="admin" class="page">
+    <section class="admin">
+      <h1 class="headline">Admin Dashboard</h1>
+      <div class="grid">
+        <div>
+          <h2>Categories</h2>
+          <ul id="adminCategoriesList"></ul>
+          <div class="field">
+            <input id="newCategoryInput" type="text" placeholder="New category name">
+            <button class="cta" id="addCategoryBtn" type="button">Add Category</button>
+          </div>
+        </div>
+        <div>
+          <h2>Write a Blog</h2>
+          <form id="newPostForm" class="contact-form">
+            <div class="field">
+              <label for="adminTitle">Title</label>
+              <input id="adminTitle" type="text" required>
+            </div>
+            <div class="field">
+              <label for="adminExcerpt">Excerpt</label>
+              <input id="adminExcerpt" type="text" required>
+            </div>
+            <div class="field">
+              <label for="adminAuthor">Author</label>
+              <input id="adminAuthor" type="text" required>
+            </div>
+            <div class="field">
+              <label for="adminTime">Read time (e.g., 7 min)</label>
+              <input id="adminTime" type="text" required>
+            </div>
+            <div class="field">
+              <label for="adminImage">Cover image URL (optional)</label>
+              <input id="adminImage" type="url" placeholder="assets/svg/sample-cover-1.svg">
+            </div>
+            <div class="field">
+              <label for="adminCategorySelect">Category</label>
+              <select id="adminCategorySelect"></select>
+            </div>
+            <div class="editor-toolbar">
+              <button type="button" data-cmd="bold" class="icon-btn">B</button>
+              <button type="button" data-cmd="italic" class="icon-btn"><i>I</i></button>
+              <button type="button" data-cmd="insertUnorderedList" class="icon-btn">• List</button>
+              <button type="button" data-cmd="createLink" class="icon-btn">Link</button>
+            </div>
+            <div id="editorArea" class="editor-area" contenteditable="true" aria-label="Post content"></div>
+            <div class="actions">
+              <button class="cta" id="publishPostBtn" type="submit">Publish</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
